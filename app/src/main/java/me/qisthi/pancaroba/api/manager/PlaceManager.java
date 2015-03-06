@@ -9,7 +9,10 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+
 import me.qisthi.pancaroba.R;
+import me.qisthi.pancaroba.model.LocationModel;
 import me.qisthi.pancaroba.model.LocationResponse;
 
 /**
@@ -38,4 +41,5 @@ public class PlaceManager {
         restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
         return restTemplate.getForObject(hostAddress, LocationResponse.class);
     }
+
 }

@@ -7,8 +7,10 @@
     android:layout_marginBottom="16dp"
     card_view:cardCornerRadius="4dp"
     card_view:cardElevation="3dp"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:clickable="true"
+    android:foreground="@drawable/item_selectable"
     >
 
     <RelativeLayout
@@ -22,10 +24,43 @@
             android:text="@string/placeholder_text"
             android:gravity="center_vertical"
             android:textSize="24sp"
-            android:layout_marginTop="10dp"
             android:layout_marginLeft="16dp"
             android:textColor="#ff000000"
-            android:textIsSelectable="true" />
+            android:textIsSelectable="true"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/imageWeather"
+            android:layout_marginStart="56dp"
+            android:layout_marginTop="10dp" />
+
+        <ImageView
+            android:layout_width="32pt"
+            android:layout_height="32pt"
+            android:id="@+id/imageWeather"
+            android:layout_alignTop="@+id/txtName"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="21dp"
+            android:contentDescription="@string/weatherIcon"
+            android:src="@drawable/fullmoon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/temperature_placeholder"
+            android:id="@+id/txtTemperature"
+            android:layout_alignBottom="@+id/imageWeather"
+            android:layout_alignStart="@+id/txtName"
+            android:textColor="#ff000000"
+            android:textSize="32sp" />
+
+        <ImageView
+            android:layout_width="30sp"
+            android:layout_height="30sp"
+            android:id="@+id/imageDegree"
+            android:src="@drawable/celcius"
+            android:layout_alignTop="@+id/txtTemperature"
+            android:layout_toEndOf="@+id/txtTemperature"
+            android:layout_alignBottom="@+id/txtTemperature" />
 
     </RelativeLayout>
 </android.support.v7.widget.CardView>

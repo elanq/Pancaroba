@@ -24,7 +24,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
 
-public class WeatherCurrent {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.io.Serializable;
+import java.util.Objects;
+
+public class WeatherCurrent implements Serializable{
     private Long time;
     private String summary;
     private String icon;
@@ -40,6 +45,8 @@ public class WeatherCurrent {
     private double cloudCover;
     private double pressure;
     private double ozone;
+    @JsonIgnore
+    private Object visibility;
 
     public Long getTime() {
         return time;
@@ -159,5 +166,13 @@ public class WeatherCurrent {
 
     public void setOzone(double ozone) {
         this.ozone = ozone;
+    }
+
+    public Object getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Object visibility) {
+        this.visibility = visibility;
     }
 }

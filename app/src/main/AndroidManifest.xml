@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.qisthi.pancaroba" >
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application>
         <meta-data
             android:name="AA_DB_NAME"
@@ -13,17 +16,27 @@
             android:value="1" />
         <meta-data
             android:name="AA_MODELS"
-            android:value="me.qisthi.pancaroba.model.LocationModel" />
+            android:value="me.qisthi.pancaroba.model.LocationModel, me.qisthi.pancaroba.model.WeatherModel" />
 
-        <activity android:name="me.qisthi.pancaroba.MainActivity"
-            android:label="Pancaroba" android:theme="@style/AppTheme"
-            >
+        <activity
+            android:name=".MainActivity"
+            android:label="Pancaroba"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+               <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".WeatherDetailActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_weather_detail"
+            android:theme="@style/AppTheme" >
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"
+                />
+        </activity>
     </application>
+
 </manifest>
-
-

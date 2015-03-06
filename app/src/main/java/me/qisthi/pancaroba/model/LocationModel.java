@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
@@ -31,7 +34,8 @@ import com.activeandroid.query.Select;
 import java.util.List;
 
 @Table(name = "Location")
-public class LocationModel extends Model {
+public class LocationModel extends Model implements Parcelable{
+    public LocationModel instance;
     @Column(name = "locationId", unique = true)
     private Long locationId;
     @Column(name = "locationName")
@@ -42,6 +46,7 @@ public class LocationModel extends Model {
     private double locationLng;
     @Column(name = "locationLastUpdated")
     private Long locationLastUpdated;
+    private WeatherResponse weatherResponse;
 
     public LocationModel() {
         super();
@@ -55,6 +60,8 @@ public class LocationModel extends Model {
         this.locationLng = locationLng;
         this.locationLastUpdated = locationLastUpdated;
     }
+
+
 
     @Override
     public String toString() {
@@ -107,6 +114,14 @@ public class LocationModel extends Model {
         this.locationLastUpdated = locationLastUpdated;
     }
 
+    public WeatherResponse getWeatherResponse() {
+        return weatherResponse;
+    }
+
+    public void setWeatherResponse(WeatherResponse weatherResponse) {
+        this.weatherResponse = weatherResponse;
+    }
+
     public static List<LocationModel> list()
     {
         return new Select()
@@ -125,5 +140,38 @@ public class LocationModel extends Model {
             Long locationId = location.getLocationId();
             new Delete().from(LocationModel.class).where("locationId = ?",locationId).execute();
         }
+    }
+
+    public static final Creator<LocationModel> CREATOR = new Creator<LocationModel>() {
+        @Override
+        public LocationModel createFromParcel(Parcel source) {
+            return new LocationModel(source);
+        }
+
+        @Override
+        public LocationModel[] newArray(int size) {
+            return new LocationModel[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    private LocationModel(Parcel in)
+    {
+//        instance = in.readParcelable(getClass().getClassLoader());
+        locationId = in.readLong();
+        locationName = in.readString();
+        weatherResponse = (WeatherResponse) in.readValue(WeatherResponse.class.getClassLoader());
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+//        dest.writeParcelable(instance, flags);
+        dest.writeLong(locationId);
+        dest.writeString(locationName);
+        dest.writeValue(weatherResponse);
     }
 }

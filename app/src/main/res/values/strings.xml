@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="placeholder_text">Lorem ipsum</string>
     <string name="app_name">PancaRoba</string>
     <string name="title_section1">Section 1</string>
@@ -11,11 +12,14 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="refresh_text">Refresh</string>
-
     <string name="weather_host">https://api.forecast.io/forecast/853811650db38a43c899ee2b2767e925/</string>
     <string name="location_host">http://dev.virtualearth.net/REST/v1/Locations</string>
     <string name="microsoft_key">Aod1iTSxlbk4TbdGUEP-mMZ9kjL-rDdjOu090gvs2VQmOGtimp7ymSkxF2M6plDd</string>
     <string name="btn_search">Search</string>
     <string name="search_placeholder">Search Location</string>
+    <string name="weatherIcon">weatherIcon</string>
+    <string name="temperature_placeholder">99</string>
+    <string name="title_activity_weather_detail">WeatherDetailActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

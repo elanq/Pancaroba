@@ -1,9 +1,4 @@
-package me.qisthi.pancaroba.model;
-
-import java.io.Serializable;
-import java.util.List;
-
-/*
+package me.qisthi.pancaroba.model;/*
 The MIT License (MIT)
 
 Copyright (c) 2015 elan
@@ -26,32 +21,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-public class WeatherHourly implements Serializable{
-    private String summary;
-    private String icon;
-    private List<WeatherCurrent> data;
 
-    public String getSummary() {
-        return summary;
-    }
+import com.activeandroid.Model;
 
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
+public class WeatherModel extends Model{
+    public static final String CLEAR_DAY = "clear-day";
+    public static final String CLEAR_NIGHT = "clear-night";
+    public static final String RAIN = "rain";
+    public static final String SNOW = "snow";
+    public static final String SLEET = "sleet";
+    public static final String WIND = "wind";
+    public static final String FOG = "fog";
+    public static final String CLOUDY = "cloudy";
+    public static final String PARTLY_CLOUDY_DAY = "partly-cloudy-day";
+    public static final String PARTLY_CLOUDY_NIGHT= "partly-cloudy-night";
 
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public List<WeatherCurrent> getData() {
-        return data;
-    }
-
-    public void setData(List<WeatherCurrent> data) {
-        this.data = data;
-    }
 }

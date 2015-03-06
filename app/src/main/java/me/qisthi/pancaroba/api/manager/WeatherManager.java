@@ -8,7 +8,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import me.qisthi.pancaroba.R;
+import me.qisthi.pancaroba.model.LocationModel;
 import me.qisthi.pancaroba.model.WeatherResponse;
 
 /*
@@ -50,12 +54,30 @@ public class WeatherManager {
         hostAddress = resources.getString(R.string.weather_host);
     }
 
-    public WeatherResponse getData(double latitude, double longitude, String time)
+    public WeatherResponse getData(double latitude, double longitude)
     {
-        final String urlData = hostAddress+latitude+","+longitude+","+time+"?units=auto";
-        WeatherResponse weatherResponse = null;
+        final String urlData = hostAddress+latitude+","+longitude+"?units=auto";
         restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-        weatherResponse = restTemplate.getForObject(urlData, WeatherResponse.class);
+        WeatherResponse weatherResponse= restTemplate.getForObject(urlData, WeatherResponse.class);
         return weatherResponse;
+    }
+
+    public List<LocationModel> getWeatherData()
+    {
+        List<LocationModel> locations = new ArrayList<>();
+        for(LocationModel location : LocationModel.list())
+        {
+            WeatherResponse weatherResponse = getData(location.getLocationLat(), location.getLocationLng());
+            location.setWeatherResponse(weatherResponse);
+            locations.add(location);
+        }
+        return locations;
+    }
+
+    public LocationModel getWeatherData(LocationModel location)
+    {
+        WeatherResponse weatherResponse = getData(location.getLocationLat(), location.getLocationLng());
+        location.setWeatherResponse(weatherResponse);
+        return location;
     }
 }

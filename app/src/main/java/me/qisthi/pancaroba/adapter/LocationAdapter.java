@@ -24,34 +24,60 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
+import me.qisthi.pancaroba.MainActivity;
 import me.qisthi.pancaroba.R;
+import me.qisthi.pancaroba.WeatherDetailActivity;
 import me.qisthi.pancaroba.model.LocationModel;
+import me.qisthi.pancaroba.model.WeatherModel;
 
 public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.LocationViewHolder>{
     private List<LocationModel> locations;
+    MainActivity mainActivity;
 
-    public LocationAdapter(List<LocationModel> locations) {
+    public LocationAdapter(List<LocationModel> locations, MainActivity mainActivity) {
         this.locations = locations;
+        this.mainActivity = mainActivity;
     }
 
     //Bind location data into viewholder
     @Override
-    public void onBindViewHolder(LocationViewHolder locationViewHolder, int i) {
-        LocationModel locationModel = locations.get(i);
-        locationViewHolder.locationName.setText(locationModel.getLocationName());
+    public void onBindViewHolder(LocationViewHolder locationViewHolder, final int i) {
+        final LocationModel locationModel = locations.get(i);
+        String icon = locationModel.getWeatherResponse().getCurrently().getIcon();
+        String temperature = Math.abs(locationModel.getWeatherResponse().getCurrently().getTemperature())+"";
+
+        locationViewHolder.locationNameText.setText(locationModel.getLocationName());
+        locationViewHolder.temperatureText.setText(temperature);
+        locationViewHolder.imageWeather.setImageResource(getWeatherIcon(icon));
+        locationViewHolder.imageDegree.setImageResource(R.drawable.celcius);
+
+        locationViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //change activity
+                Intent intent = new Intent(mainActivity, WeatherDetailActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("weatherDetail", locationModel);
+                mainActivity.startActivity(intent);
+            }
+        });
+
     }
 
     //Inflate the item view in viewholder to view
     @Override
-    public LocationViewHolder onCreateViewHolder(ViewGroup viewGroup, int i)
+    public LocationViewHolder onCreateViewHolder(final ViewGroup viewGroup, final int i)
     {
         View itemView = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.card_view, viewGroup, false);
@@ -63,13 +89,39 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
         return locations.size();
     }
 
+    public int getWeatherIcon(String icon)
+    {
+        switch (icon)
+        {
+            case WeatherModel.CLEAR_DAY : return R.drawable.clearday;
+            case WeatherModel.CLEAR_NIGHT : return R.drawable.clearnight;
+            case WeatherModel.CLOUDY : return R.drawable.cloudy;
+            case WeatherModel.FOG : return R.drawable.fog;
+            case WeatherModel.PARTLY_CLOUDY_DAY : return R.drawable.partlycloudyday;
+            case WeatherModel.PARTLY_CLOUDY_NIGHT : return R.drawable.partlycloudynight;
+            case WeatherModel.RAIN : return R.drawable.rain;
+            case WeatherModel.SLEET : return R.drawable.sleet;
+            case WeatherModel.SNOW: return R.drawable.snow;
+            case WeatherModel.WIND: return R.drawable.wind;
+            default: return R.drawable.fullmoon;
+        }
+    }
+
     //This class simply act as a view holder. Which means this class contains view information to be inflated
     public static class LocationViewHolder extends RecyclerView.ViewHolder {
-        protected TextView locationName;
+        protected TextView locationNameText;
+        protected TextView temperatureText;
+        protected ImageView imageWeather;
+        protected ImageView imageDegree;
+
+
 
         public LocationViewHolder(View itemView) {
             super(itemView);
-            locationName = (TextView) itemView.findViewById(R.id.txtName);
+            locationNameText = (TextView) itemView.findViewById(R.id.txtName);
+            temperatureText = (TextView) itemView.findViewById(R.id.txtTemperature);
+            imageWeather = (ImageView) itemView.findViewById(R.id.imageWeather);
+            imageDegree = (ImageView) itemView.findViewById(R.id.imageDegree);
         }
     }
 

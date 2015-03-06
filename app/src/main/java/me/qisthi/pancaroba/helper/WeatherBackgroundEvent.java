@@ -1,67 +1,1 @@
-package me.qisthi.pancaroba.helper;
-
-import android.content.Context;
-import android.os.AsyncTask;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.text.SimpleDateFormat;
-
-import me.qisthi.pancaroba.api.manager.WeatherManager;
-import me.qisthi.pancaroba.model.WeatherResponse;
-
-/*
-The MIT License (MIT)
-
-Copyright (c) 2015 elan
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
- */
-public class WeatherBackgroundEvent extends AsyncTask<Void, Void, WeatherResponse> {
-    public TextView textTemperature;
-    public Context context;
-    public double latitude;
-    public double longitude;
-
-    @Override
-    protected void onPreExecute() {
-        Toast.makeText(context, "Loading....", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    protected void onPostExecute(WeatherResponse weatherResponse) {
-
-        if(textTemperature!=null)
-        {
-            textTemperature.setText(weatherResponse.getCurrently().getTemperature()+" \u00b0C");
-        }
-        Toast.makeText(context,"Finished",Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    protected WeatherResponse doInBackground(Void... params) {
-
-        WeatherManager weatherManager = new WeatherManager(context);
-//        double longitude = 107.60936;
-//        double latitude = -6.9179;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        String currentTime = dateFormat.format(System.currentTimeMillis());
-        return weatherManager.getData(latitude, longitude, currentTime);
-    }
-}
+package me.qisthi.pancaroba.helper;import android.content.Context;import android.os.AsyncTask;import android.support.v4.widget.SwipeRefreshLayout;import android.support.v7.widget.RecyclerView;import android.widget.SearchView;import android.widget.TextView;import com.nispok.snackbar.Snackbar;import java.util.List;import me.qisthi.pancaroba.MainActivity;import me.qisthi.pancaroba.R;import me.qisthi.pancaroba.adapter.LocationAdapter;import me.qisthi.pancaroba.api.manager.WeatherManager;import me.qisthi.pancaroba.model.LocationModel;/*The MIT License (MIT)Copyright (c) 2015 elanPermission is hereby granted, free of charge, to any person obtaining a copyof this software and associated documentation files (the "Software"), to dealin the Software without restriction, including without limitation the rightsto use, copy, modify, merge, publish, distribute, sublicense, and/or sellcopies of the Software, and to permit persons to whom the Software isfurnished to do so, subject to the following conditions:The above copyright notice and this permission notice shall be included inall copies or substantial portions of the Software.THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS ORIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THEAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHERLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS INTHE SOFTWARE. */public class WeatherBackgroundEvent extends AsyncTask<Void, Void, List<LocationModel>> {    public Context context;    public RecyclerView recList;    public SearchView searchView;    public MainActivity mainActivity;    public SwipeRefreshLayout refreshLayout;    @Override    protected void onPreExecute() {        Snackbar.with(context)                .text("Loading Data..")                .show(mainActivity);        //layout    }    @Override    protected void onPostExecute(List<LocationModel> locationModels) {        Snackbar.with(context).dismiss();        Snackbar.with(context)                .color(R.color.accentColor)                .text("Data loaded")                .show(mainActivity);        //attach our location data to recycler view        MainActivity.locationCache = locationModels;        final LocationAdapter locationAdapter = new LocationAdapter(MainActivity.locationCache, mainActivity);        recList.setAdapter(locationAdapter);        //swipe action        SwipeableRecyclerViewTouchListener swipeTouchListener =                new SwipeableRecyclerViewTouchListener(recList,new SwipeableRecyclerViewTouchListener.SwipeListener() {                    @Override                    public boolean canSwipe(int position) {                        return true;                    }                    @Override                    public void onDismissedBySwipeLeft(RecyclerView recyclerView, int[] reverseSortedPositions) {                        LocationModel location = null;                        for (int position : reverseSortedPositions) {                            location = MainActivity.locationCache.get(position);                            LocationModel.remove(location);                            MainActivity.locationCache.remove(position);                            locationAdapter.notifyItemRemoved(position);                        }                        locationAdapter.notifyDataSetChanged();                        if(location!=null)                        {                            Snackbar.with(context)                                    .color(R.color.accentColor)                                    .text(location.getLocationName()+" removed")                                    .show(mainActivity);                        }                    }                    @Override                    public void onDismissedBySwipeRight(RecyclerView recyclerView, int[] reverseSortedPositions) {                        LocationModel location = null;                        for (int position : reverseSortedPositions) {                            location = MainActivity.locationCache.get(position);                            LocationModel.remove(location);                            MainActivity.locationCache.remove(position);                            locationAdapter.notifyItemRemoved(position);                        }                        locationAdapter.notifyDataSetChanged();                        if(location!=null)                        {                            Snackbar.with(context)                                    .color(R.color.accentColor)                                    .text(location.getLocationName()+" removed")                                    .show(mainActivity);                        }                    }                });        recList.addOnItemTouchListener(swipeTouchListener);        //search action        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {            @Override            public boolean onQueryTextSubmit(String query) {                if(!query.equals(""))                {                    LocationBackgroundEvent locationBackgroundEvent = new LocationBackgroundEvent();                    locationBackgroundEvent.context = context;                    locationBackgroundEvent.query = query;                    locationBackgroundEvent.maxResults = "10";                    locationBackgroundEvent.locationAdapter = locationAdapter;                    locationBackgroundEvent.mainActivity = mainActivity;                    locationBackgroundEvent.execute();                }else{                    Snackbar.with(context).dismiss();                    Snackbar.with(context)                            .text("Please provide search query first")                            .show(mainActivity);                }                return false;            }            @Override            public boolean onQueryTextChange(String newText) {                return false;            }        });        refreshLayout.setRefreshing(false);    }    @Override    protected List<LocationModel> doInBackground(Void... params) {        WeatherManager weatherManager = new WeatherManager(context);        return weatherManager.getWeatherData();    }}

@@ -1,9 +1,4 @@
-package me.qisthi.pancaroba.model;
-
-import java.io.Serializable;
-import java.util.List;
-
-/*
+package me.qisthi.pancaroba.helper;/*
 The MIT License (MIT)
 
 Copyright (c) 2015 elan
@@ -26,32 +21,28 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-public class WeatherHourly implements Serializable{
-    private String summary;
-    private String icon;
-    private List<WeatherCurrent> data;
 
-    public String getSummary() {
-        return summary;
-    }
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public List<WeatherCurrent> getData() {
-        return data;
-    }
-
-    public void setData(List<WeatherCurrent> data) {
-        this.data = data;
+public class NetworkUtil {
+    public static boolean isConnected(Context ctx)
+    {
+        ConnectivityManager manager = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = manager.getActiveNetworkInfo();
+        if(netInfo==null)
+        {
+            return false;
+        }
+        if(!netInfo.isConnected())
+        {
+            return false;
+        }
+        if(!netInfo.isAvailable())
+        {
+            return false;
+        }
+        return true;
     }
 }
